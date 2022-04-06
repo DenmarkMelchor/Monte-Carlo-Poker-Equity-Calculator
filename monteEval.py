@@ -474,7 +474,7 @@ def evalHand(hand):
         return onePair_val
     return highcardEval(hand)
 
-# hole1 and hole2 must be in "2-A + h/s/c/d" format | probableRange is from 0 to 1 | if commCard does not exist yet, assign as ""
+# hole1 and hole2 must be in "2-A + h/s/c/d" format | probableRange is from 0 to 1
 # never set probableRange to less than 0.05
 def monteEval(numSimulations, hole1, hole2, numVillains, probableRange, commCard1, commCard2, commCard3, commCard4, commCard5):
     heroWins = 0
@@ -546,7 +546,7 @@ def monteEval(numSimulations, hole1, hole2, numVillains, probableRange, commCard
         else:
             return (heroWins/numSimulations)
 
-# sufficiently accurate at 500sims*10processes(5k total), min 1 opp w/ 100% range ~0.31sec, max 8 opp w/ 5% range ~3.5sec
+# Amount of simulations = procs * sims | 10 procs * 1000 sims per proc = 10,000 simulations.
 def multi_monteEval(procs, sims, hole1, hole2, numVillains, probableRange, commCard1, commCard2, commCard3, commCard4, commCard5):
     with concurrent.futures.ProcessPoolExecutor() as executor:
         results = [executor.submit(monteEval, sims, hole1, hole2, numVillains, probableRange, commCard1, commCard2, commCard3, commCard4, commCard5) for _ in range(procs)]
@@ -598,7 +598,7 @@ def main():
     # Calls created function.
     comm1, comm2, comm3, comm4, comm5 = askStreetCards()
 
-    # Calculates and prints probable equity for villain
+    # Calculates and prints probable equity for hero | Change first 2 arguments to change number of simulations
     probableEquity = multi_monteEval(10, 1000, hole1, hole2, villNum, probRange,  comm1, comm2, comm3, comm4, comm5)
     print(f"Probable Equity: {probableEquity}")
 
